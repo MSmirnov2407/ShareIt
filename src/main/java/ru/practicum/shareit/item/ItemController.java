@@ -64,7 +64,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text){
+    public List<ItemDto> searchItems(@RequestParam String text) {
         List<Item> items = itemService.searchItems(text); //получили список вещей по условию поиска
         log.info("Получен список вещей, содержащих text= " + text);
 
