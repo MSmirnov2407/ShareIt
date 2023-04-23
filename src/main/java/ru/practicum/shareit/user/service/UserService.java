@@ -52,9 +52,10 @@ public class UserService {
 
     /**
      * Возвращение списка всех пользователей
+     *
      * @return
      */
-    public List<User> getAll(){
+    public List<User> getAll() {
         return userRepository.getAll();
     }
 
