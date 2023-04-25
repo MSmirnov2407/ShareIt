@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.exception.EmailAlreadyExistException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,15 +28,16 @@ public class UserService {
     /**
      * СОздание нового пользователя
      *
-     * @param newUser - новый пользователь
-     * @return - новый польхователь, взятый из хранилища
+     * @param newUserDto - новый пользователь в виде DTO
+     * @return - новый польхователь, взятый из хранилища, в виде DTO
      */
-    public User createUser(User newUser) {
+    public UserDto createUser(UserDto newUserDto) {
+        User newUser = UserMapper.dtoToUser(newUserDto); //преобразовали DTO в объект
         validateCreate(newUser); //проверяем данные (помимо валидации аннотациями)
         id++; //для каждого нового пользователя инкрементируем id
         newUser.setId(id); //присваиваем id новому пользователю
         userRepository.saveUser(newUser); //сохраняем пользователя в хранилище
-        return newUser;
+        return UserMapper.userToDto(newUser);
     }
 
     /**
@@ -42,12 +46,12 @@ public class UserService {
      * @param userId
      * @return
      */
-    public User getUserById(int userId) {
+    public UserDto getUserDtoById(int userId) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
             throw new ElementNotFoundException("Пользователь с id = " + userId + " не найден.");
         }
-        return user;
+        return UserMapper.userToDto(user); //возаращаем DTO объекта
     }
 
     /**
@@ -55,8 +59,10 @@ public class UserService {
      *
      * @return
      */
-    public List<User> getAll() {
-        return userRepository.getAll();
+    public List<UserDto> getAllDto() {
+        return userRepository.getAll().stream()
+                .map(UserMapper::userToDto)
+                .collect(Collectors.toList()); //вернули список с преобразованием userToDto
     }
 
     /**
@@ -70,14 +76,16 @@ public class UserService {
 
     /**
      * Обновление пользователя в хранилище
-     *
-     * @param updatedUser
+     * @param updatedUserDto
+     * @param userId
      * @return
      */
-    public User updateUser(User updatedUser) {
+    public UserDto updateUser(UserDto updatedUserDto, int userId) {
+        updatedUserDto.setId(userId); //Установлили id
+        User updatedUser = UserMapper.dtoToUser(updatedUserDto); //преобразовали DTO В объект
         validateUpdate(updatedUser); //проверяем данные (помимо валидации аннотациями)
         userRepository.updateUser(updatedUser);
-        return userRepository.findUserById(updatedUser.getId());
+        return UserMapper.userToDto(userRepository.findUserById(updatedUser.getId())); //возаращаем DTO объекта
     }
 
     /**

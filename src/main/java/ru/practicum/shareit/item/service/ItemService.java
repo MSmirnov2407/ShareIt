@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
 
@@ -10,25 +10,25 @@ public interface ItemService {
     /**
      * СОздание новой вещи
      *
-     * @param newItem - новая вещь
-     * @return - новая вещь, взятая из хранилища
+     * @param newItemDto - новая вещь в виде DTO
+     * @return - новая вещь, взятая из хранилища в виде DTO
      */
-    Item createItem(Item newItem);
+    ItemDto createItem(ItemDto newItemDto, int ownerId);
 
     /**
-     * Получение вещи из хранилища по id
+     * Получение DTO вещи из хранилища по id
      *
      * @param itemId
      * @return
      */
-    Item getItemById(int itemId);
+    ItemDto getItemDtoById(int itemId);
 
     /**
      * Возвращение списка всех вещей
      *
      * @return
      */
-    List<Item> getAllByUser(int ownerId);
+    List<ItemDto> getAllDtoByUser(int ownerId);
 
     /**
      * Удаление вещи из хрангилища
@@ -40,10 +40,10 @@ public interface ItemService {
     /**
      * Обновление вещи в хранилище
      *
-     * @param updatedItem
+     * @param updatedItemDto
      * @return
      */
-    Item updateItem(Item updatedItem, int ownerId);
+    ItemDto updateItem(ItemDto updatedItemDto, int itemId, int ownerId);
 
     /**
      * Поиск вещи с совпадением текста в названии или описании
@@ -51,6 +51,6 @@ public interface ItemService {
      * @param text - искомый текст
      * @return
      */
-    List<Item> searchItems(String text);
+    List<ItemDto> searchItemsDto(String text);
 
 }

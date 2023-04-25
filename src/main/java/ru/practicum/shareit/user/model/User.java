@@ -1,25 +1,18 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Getter
+@Setter
 public class User {
     private int id; //id пользователя
-    @NotNull
-    @Email
-    @Pattern(regexp = ".+@.+\\..+")
     private String email; //email
-
-    @NotBlank
     private String name; //имя пользователя
 
     @Override

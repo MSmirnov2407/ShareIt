@@ -4,42 +4,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.exception.NotAnOwnerException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository; //хранилище вещей
-
+    private final UserService userService;
     private int id; //id очередного создаваемого пользователя
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService) {
         this.itemRepository = itemRepository;
+        this.userService = userService;
     }
 
     @Override
-    public Item createItem(Item newItem) {
+    public ItemDto createItem(ItemDto itemDto, int ownerId) {
+        Item item = ItemMapper.dtoToItem(itemDto); //превращаем dto в объект
+        item.setOwner(UserMapper.dtoToUser(userService.getUserDtoById(ownerId))); //присваиваем владельца (объект User вместо простого id)
+
         id++; //для каждой новой вещи инкрементируем id
-        newItem.setId(id); //присваиваем id новой вещи
-        itemRepository.saveItem(newItem); //сохраняем вещь в хранилище
-        return newItem;
+        item.setId(id); //присваиваем id новой вещи
+        itemRepository.saveItem(item); //сохраняем вещь в хранилище
+        return ItemMapper.itemToDto(item); //возвращаем DTO Объекта
     }
 
     @Override
-    public Item getItemById(int itemId) {
+    public ItemDto getItemDtoById(int itemId) {
         Item item = itemRepository.findItemById(itemId);
         if (item == null) {
             throw new ElementNotFoundException("Вещь с id = " + itemId + " не найдена.");
         }
-        return item;
+        return ItemMapper.itemToDto(item); //вернули DTO Объекта
     }
 
     @Override
-    public List<Item> getAllByUser(int ownerId) {
-        return itemRepository.getAllByUser(ownerId);
+    public List<ItemDto> getAllDtoByUser(int ownerId) {
+        List<Item> items = itemRepository.getAllByUser(ownerId); //взяли список вещей из репозитория
+        return items.stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     @Override
@@ -48,16 +60,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(Item updatedItem, int ownerId) {
-        validateUpdate(updatedItem, ownerId); //проверяем данные (помимо валидации аннотациями)
-        itemRepository.updateItem(updatedItem);
-        return itemRepository.findItemById(updatedItem.getId());
+    public ItemDto updateItem(ItemDto updatedItemDto, int itemId, int ownerId) {
+        Item item = ItemMapper.dtoToItem(updatedItemDto); //превращаем dto в объект
+        item.setId(itemId); //присваиваем id
+        validateUpdate(item, ownerId); //проверяем данные (помимо валидации аннотациями)
+        itemRepository.updateItem(item);
+        return ItemMapper.itemToDto(itemRepository.findItemById(item.getId())); //вернули DTO Объекта
     }
 
     @Override
-    public List<Item> searchItems(String text) {
+    public List<ItemDto> searchItemsDto(String text) {
         String normalizedText = text.toLowerCase();
-        return itemRepository.searchItems(normalizedText);
+        List<Item> items = itemRepository.searchItems(normalizedText); //взяли список нужных вещей из хранилища
+        return items.stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     private void validateUpdate(Item item, int ownerId) {
