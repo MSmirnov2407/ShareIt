@@ -8,20 +8,20 @@ import ru.practicum.shareit.exception.EmailAlreadyExistException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.repository.UserJpaRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class UserService {
-    private final UserRepository userRepository; //хранилище пользователей
-    private int id; //id очередного создаваемого пользователя
+    private final UserJpaRepository userRepository; //хранилище пользователей
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserJpaRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -33,10 +33,7 @@ public class UserService {
      */
     public UserDto createUser(UserDto newUserDto) {
         User newUser = UserMapper.dtoToUser(newUserDto); //преобразовали DTO в объект
-        validateCreate(newUser); //проверяем данные (помимо валидации аннотациями)
-        id++; //для каждого нового пользователя инкрементируем id
-        newUser.setId(id); //присваиваем id новому пользователю
-        userRepository.saveUser(newUser); //сохраняем пользователя в хранилище
+        userRepository.save(newUser); //сохраняем пользователя в хранилище
         return UserMapper.userToDto(newUser);
     }
 
@@ -47,11 +44,11 @@ public class UserService {
      * @return
      */
     public UserDto getUserDtoById(int userId) {
-        User user = userRepository.findUserById(userId);
-        if (user == null) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
             throw new ElementNotFoundException("Пользователь с id = " + userId + " не найден.");
         }
-        return UserMapper.userToDto(user); //возаращаем DTO объекта
+        return UserMapper.userToDto(user.get()); //возаращаем DTO объекта
     }
 
     /**
@@ -60,22 +57,23 @@ public class UserService {
      * @return
      */
     public List<UserDto> getAllDto() {
-        return userRepository.getAll().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::userToDto)
                 .collect(Collectors.toList()); //вернули список с преобразованием userToDto
     }
 
     /**
-     * Удаление пользователя из хрангилища
+     * Удаление пользователя из хранилища
      *
      * @param id
      */
     public void deleteUser(int id) {
-        userRepository.deleteUserById(id);
+        userRepository.deleteById(id);
     }
 
     /**
      * Обновление пользователя в хранилище
+     *
      * @param updatedUserDto
      * @param userId
      * @return
@@ -84,8 +82,20 @@ public class UserService {
         updatedUserDto.setId(userId); //Установлили id
         User updatedUser = UserMapper.dtoToUser(updatedUserDto); //преобразовали DTO В объект
         validateUpdate(updatedUser); //проверяем данные (помимо валидации аннотациями)
-        userRepository.updateUser(updatedUser);
-        return UserMapper.userToDto(userRepository.findUserById(updatedUser.getId())); //возаращаем DTO объекта
+
+        Integer updatedUserId = updatedUser.getId(); //взяли id пользователя
+        User user = userRepository.findById(updatedUserId).get(); //взяли из хранилища пользователя по этому id
+        String email = updatedUser.getEmail();
+        String name = updatedUser.getName();
+        /*обновление данных в пользователе, при их наличии в updatedUser*/
+        if (!(email == null || email.isBlank())) {
+            user.setEmail(updatedUser.getEmail());
+        }
+        if (!(name == null || name.isBlank())) {
+            user.setName(updatedUser.getName());
+        }
+        userRepository.save(user);
+        return UserMapper.userToDto(userRepository.findById(updatedUserId).get()); //возаращаем DTO объекта
     }
 
     /**
@@ -94,9 +104,10 @@ public class UserService {
      * @param user
      */
     private void validateCreate(User user) {
-        Map<Integer, String> usersEmails = userRepository.getUsersEmails(); //запросили из хранилища мапу id-Email
+        List<String> usersEmails = userRepository.getUsersEmails(); //запросили из хранилища список id-Email
+        log.warn("email существующих пользователей " + usersEmails);
         String email = user.getEmail(); // email обновленного пользователя
-        if (usersEmails.containsValue(email)) { //если Email существует - исключение
+        if (usersEmails.contains(email)) { //если Email существует - исключение
             throw new EmailAlreadyExistException("UserService Пользователь с Email= " + email + " уже сущетсвует.");
         }
     }
@@ -108,16 +119,20 @@ public class UserService {
      */
     private void validateUpdate(User updatedUser) {
         int updatedUserId = updatedUser.getId(); // id обновленного пользователя
-        Map<Integer, String> usersEmails = userRepository.getUsersEmails(); //запросили из хранилища мапу id-Email
+        List<User> users = userRepository.findAll(); //запросили из хранилища всех пользователей
 
-        if (!usersEmails.containsKey(updatedUserId)) { //если id нет - исключение
+        Map<Integer, String> usersEmails = users.stream()
+                .collect(Collectors.toMap(User::getId, User::getEmail)); //создаем мапу id-email
+
+        if (!usersEmails.containsKey(updatedUserId)) { //если юзера нет - исключение
             throw new ElementNotFoundException("Пользователь с id = " + updatedUserId + " не найден.");
         }
         String updatedUserEmail = updatedUser.getEmail(); // email обновленного пользователя
         if (updatedUserEmail == null || updatedUserEmail.isBlank()) { //если в запросе на обновление нет Email, то выходим
             return;
         }
-        String oldEmail = usersEmails.get(updatedUserId); //из мапы id-Email взяли старый Email, принадлежащий пользователю
+        String oldEmail = usersEmails.get(updatedUserId); //взяли старый Email, принадлежащий пользователю
+
         if (!oldEmail.equals(updatedUserEmail)) { //если при обновлении изменяется Email
             if (usersEmails.containsValue(updatedUserEmail)) { //проверяем, если новый email уже существует - исключение
                 throw new EmailAlreadyExistException("Пользователь с Email= " + updatedUserEmail + " уже сущетсвует.");

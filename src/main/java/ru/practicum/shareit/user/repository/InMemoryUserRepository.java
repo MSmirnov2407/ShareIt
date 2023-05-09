@@ -3,10 +3,7 @@ package ru.practicum.shareit.user.repository;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -14,17 +11,17 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<Integer, User> users = new HashMap<>(); //мапа id-пользователь
 
     @Override
-    public User findUserById(int id) {
-        return users.get(id); //вернули пользователя по id
+    public Optional<User> findById(int id) {
+        return Optional.of(users.get(id)); //вернули пользователя по id
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> findAll() {
         return new ArrayList<User>(users.values()); //возвращаем значения мапы в виде списка
     }
 
     @Override
-    public User saveUser(User newUser) {
+    public User save(User newUser) {
         Integer id = newUser.getId(); //взяли id пользователя
         users.put(id, newUser); //по id сложили в мапу нового пользователя
         return users.get(id); //вернули пользователя по id
@@ -49,7 +46,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public void deleteById(int id) {
         users.remove(id);
     }
 

@@ -26,7 +26,7 @@ public interface ItemRepository {
      * @param newItem сохраняемая вещь
      * @return сохраненная вещь
      */
-    Item saveItem(Item newItem);
+    Item save(Item newItem);
 
     /**
      * Обновление вещи в хранилище
