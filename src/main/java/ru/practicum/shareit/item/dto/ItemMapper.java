@@ -72,8 +72,8 @@ public class ItemMapper {
         Optional<Booking> lastBookingOptional = bookings.stream()
                 .filter(b -> b.getItem().getId() == item.getId()) //фильтруем по itemId
                 .filter(b -> b.getStart().isBefore(LocalDateTime.now())) //фильтруем по дате начала бронирования до текущего времени
-                .min((b1, b2) -> b2.getStart().
-                        compareTo(b1.getStart())); //отсортировали по датам и взяли ближайшую к текущей
+                .min((b1, b2) -> b2.getStart()
+                        .compareTo(b1.getStart())); //отсортировали по датам и взяли ближайшую к текущей
         Optional<Booking> nextBookingOptional = bookings.stream()
                 .filter(b -> b.getItem().getId() == item.getId()) //фильтруем по itemId
                 .filter(b -> b.getStart().isAfter(LocalDateTime.now())) //фильтруем по дате начала бронирования после текущего времени

@@ -69,8 +69,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoWithItem> getAllDtoByUserAndState(int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
-        if(user == null) {
-            throw new ElementNotFoundException("Пользователь с id=" + userId+ " не найден");
+        if (user == null) {
+            throw new ElementNotFoundException("Пользователь с id=" + userId + " не найден");
         }
         List<Booking> bookings;
         switch (state) {
@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBooker_IdAndStartIsAfter(userId, LocalDateTime.now(), Sort.by("start").descending());
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,LocalDateTime.now(),LocalDateTime.now(), Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by("start").descending());
                 break;
             case "WAITING":
                 bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING, Sort.by("start").descending());
@@ -104,8 +104,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoWithItem> getAllDtoByOwnerAndState(int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
-        if(user == null) {
-            throw new ElementNotFoundException("Пользователь с id=" + userId+ " не найден");
+        if (user == null) {
+            throw new ElementNotFoundException("Пользователь с id=" + userId + " не найден");
         }
         List<Booking> bookings;
         switch (state) {
@@ -119,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findFutureByOwner(userId, LocalDateTime.now());
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findCurrentByOwner(userId,LocalDateTime.now());
+                bookings = bookingRepository.findCurrentByOwner(userId, LocalDateTime.now());
                 break;
             case "WAITING":
                 bookings = bookingRepository.findByOwnerAndStatus(userId, Status.WAITING);
@@ -146,13 +146,13 @@ public class BookingServiceImpl implements BookingService {
         validateUpdate(booking, userId); //проверяем данные (помимо валидации аннотациями)
 
         if (approved) { //меняем статус бронирования в зависимости от значения approved
-            if (booking.getStatus() == Status.APPROVED){ //если статус уже был установлен, то исключение
-                throw new BookingAlreadyApprovedException("Бронирование с Id="+booking.getId()+" уже было подтверждено ранее");
+            if (booking.getStatus() == Status.APPROVED) { //если статус уже был установлен, то исключение
+                throw new BookingAlreadyApprovedException("Бронирование с Id=" + booking.getId() + " уже было подтверждено ранее");
             }
             booking.setStatus(Status.APPROVED);
         } else {
-            if (booking.getStatus() == Status.APPROVED){
-                throw new BookingAlreadyApprovedException("Бронирование с Id="+booking.getId()+" уже было отклонено ранее");
+            if (booking.getStatus() == Status.APPROVED) {
+                throw new BookingAlreadyApprovedException("Бронирование с Id=" + booking.getId() + " уже было отклонено ранее");
             }
             booking.setStatus(Status.REJECTED);
         }

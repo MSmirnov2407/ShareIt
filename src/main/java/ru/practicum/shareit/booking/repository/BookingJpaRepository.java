@@ -17,7 +17,7 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findByBooker_Id(int bookerId, Sort sort);
 
-    List<Booking> findByBooker_IdAndStatus(int bookerId, Status State, Sort sort);
+    List<Booking> findByBooker_IdAndStatus(int bookerId, Status state, Sort sort);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +

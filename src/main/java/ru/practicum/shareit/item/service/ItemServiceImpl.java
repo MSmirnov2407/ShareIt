@@ -40,8 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
 
     @Autowired
-    public ItemServiceImpl(ItemJpaRepository itemRepository, UserService userService,
-                           BookingJpaRepository bookingJpaRepository, CommentJpaRepository commentRepository) {
+    public ItemServiceImpl(ItemJpaRepository itemRepository, UserService userService, BookingJpaRepository bookingJpaRepository, CommentJpaRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.bookingRepository = bookingJpaRepository;
@@ -64,6 +63,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return ItemMapper.itemToDto(item.get()); //вернули DTO Объекта
     }
+
     @Override
     public ItemDtoWithBookings getItemDtoWithBookingsById(int itemId, int userId) {
         Optional<Item> item = itemRepository.findById(itemId);
@@ -72,8 +72,8 @@ public class ItemServiceImpl implements ItemService {
         }
         List<Booking> bookings = bookingRepository.findByItem_IdAndStatus(itemId, Status.APPROVED, Sort.by("start").ascending()); //список всех бронирований, относящихся к item-ам от старых к новым
         List<Comment> comments = commentRepository.findByItem_Id(itemId, Sort.by("created").ascending()); //сортировка от старых к новым
-        List<CommentDto>  commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
-        return ItemMapper.itemToDtoWithBookings(item.get(),bookings, userId, commentsDto); //вернули DTO Объекта
+        List<CommentDto> commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
+        return ItemMapper.itemToDtoWithBookings(item.get(), bookings, userId, commentsDto); //вернули DTO Объекта
     }
 
     @Override
@@ -83,10 +83,8 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> bookings = bookingRepository.findByItem_IdIn(itemsIds, Sort.by("start").ascending()); //список всех бронирований, относящихся к item-ам от старых к новым
         List<Comment> comments = commentRepository.findByItem_IdIn(itemsIds, Sort.by("created").ascending()); //сортировка от старых к новым
-        List<CommentDto>  commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
-        return items.stream()
-                .map(i -> ItemMapper.itemToDtoWithBookings(i, bookings,ownerId, commentsDto))
-                .collect(Collectors.toList()); //вернули список с преобразованием itemToDto
+        List<CommentDto> commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
+        return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookings, ownerId, commentsDto)).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     @Override
@@ -121,17 +119,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItemsDto(String text) {
-        if (text.isBlank()){
+        if (text.isBlank()) {
             return new ArrayList<>();
         }
         List<Item> items = itemRepository.searchItems(text); //взяли список нужных вещей из хранилища
-        return items.stream()
-                .map(ItemMapper::itemToDto)
-                .collect(Collectors.toList()); //вернули список с преобразованием itemToDto
+        return items.stream().map(ItemMapper::itemToDto).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     @Override
-    public CommentDto createComment(int itemId, int authorId, CommentDto commentDto){
+    public CommentDto createComment(int itemId, int authorId, CommentDto commentDto) {
 
 
         Comment comment = CommentMapper.dtoToComment(commentDto); //превращаем dto в объект
@@ -155,14 +151,14 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void validateComment(Comment comment){
+    private void validateComment(Comment comment) {
         int itemId = comment.getItem().getId();
         int userId = comment.getAuthor().getId();
         LocalDateTime commentTime = comment.getCreated();
 
         List<Booking> bookings = bookingRepository.findByItem_idAndBooker_IdAndEndIsBefore(itemId, userId, commentTime, Sort.by("start").descending());
 
-        if (bookings.isEmpty()){ //если нет бронирований - исключение
+        if (bookings.isEmpty()) { //если нет бронирований - исключение
             throw new ValidateCommentException("Пользователь не брал вещь в аренду или аренда еще не окончена");
         }
     }
