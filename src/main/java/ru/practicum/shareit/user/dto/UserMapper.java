@@ -27,7 +27,7 @@ public class UserMapper {
      * @return User
      */
     public static User dtoToUser(UserDto userDto) {
-        if (userDto == null){
+        if (userDto == null) {
             return null;
         }
 

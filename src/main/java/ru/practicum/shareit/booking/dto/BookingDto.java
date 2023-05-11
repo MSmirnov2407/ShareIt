@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

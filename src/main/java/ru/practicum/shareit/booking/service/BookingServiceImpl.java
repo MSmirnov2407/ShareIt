@@ -181,8 +181,8 @@ public class BookingServiceImpl implements BookingService {
             throw new BookerIsOwnerException("BookingService: автор бронирования является владельцем вещи");
         }
         /*если бронирования пересекаются. Т.е. начало бронирования раньше, чем конец проверяемого бронирования, и конец позже, чем начало проверяемого*/
-        List<Booking> overBooking = bookingRepository.findByItem_IdAndStartIsBeforeAndEndIsAfter(booking.getItem().getId(), end,start, Sort.by("start").descending());
-        if (overBooking.size() > 0){
+        List<Booking> overBooking = bookingRepository.findByItem_IdAndStartIsBeforeAndEndIsAfter(booking.getItem().getId(), end, start, Sort.by("start").descending());
+        if (overBooking.size() > 0) {
             throw new BookingTimeException("Время бронирования пересекается с уже существующим бронированием");
         }
     }
