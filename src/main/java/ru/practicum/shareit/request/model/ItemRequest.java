@@ -20,7 +20,7 @@ public class ItemRequest {
 
     @Column(name = "text")
     String requestText; //текст запроса
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User requestor; //пользователь, создавший запрос
 

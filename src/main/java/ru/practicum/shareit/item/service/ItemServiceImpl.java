@@ -49,8 +49,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, int ownerId) {
+        itemDto.setOwner(userService.getUserDtoById(ownerId)); //присваиваем владельца (объект User вместо простого id)
         Item item = ItemMapper.dtoToItem(itemDto); //превращаем dto в объект
-        item.setOwner(UserMapper.dtoToUser(userService.getUserDtoById(ownerId))); //присваиваем владельца (объект User вместо простого id)
         itemRepository.save(item); //сохраняем вещь в хранилище
         return ItemMapper.itemToDto(item); //возвращаем DTO Объекта
     }

@@ -18,52 +18,18 @@ public class ErrorHandler {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(ElementNotFoundException.class)
+    @ExceptionHandler({ElementNotFoundException.class, NotAnOwnerException.class, BookerIsOwnerException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public String handleElementNotFound(ElementNotFoundException ex) {
-        log.debug("ElementNotFountException :" + ex.getMessage());
+    public String handleElementNotFound(RuntimeException ex) {
+        log.debug(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         return ex.getMessage();
     }
 
-    @ExceptionHandler(NotAnOwnerException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public String handleNotAnOwner(NotAnOwnerException ex) {
-        log.debug("NotAnOwnerException :" + ex.getMessage());
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(BookerIsOwnerException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public String handleBookerIsOwner(BookerIsOwnerException ex) {
-        log.debug("BookerIsOwnerException :" + ex.getMessage());
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(ItemNotAvailableException.class)
+    @ExceptionHandler({ItemNotAvailableException.class, BookingTimeException.class,
+            BookingAlreadyApprovedException.class, ValidateCommentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST) //400
-    public String handleNotAvailable(ItemNotAvailableException ex) {
-        log.debug("ItemNotAvailableException :" + ex.getMessage());
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(BookingTimeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
-    public String handleBookingTimeEx(BookingTimeException ex) {
-        log.debug("BookingTimeException :" + ex.getMessage());
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(BookingAlreadyApprovedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
-    public String handleBookingTimeEx(BookingAlreadyApprovedException ex) {
-        log.debug("BookingAlreadyApprovedException :" + ex.getMessage());
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(ValidateCommentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
-    public String handleNotAvailable(ValidateCommentException ex) {
-        log.debug("ValidateCommentException :" + ex.getMessage());
+    public String handleBadRequest(RuntimeException ex) {
+        log.debug(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         return ex.getMessage();
     }
 

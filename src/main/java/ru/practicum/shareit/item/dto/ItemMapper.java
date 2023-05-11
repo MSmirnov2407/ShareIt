@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ItemMapper {
         itemDto.setIsAvailable(item.getIsAvailable());//установили isAvailable
         itemDto.setName(item.getName()); // установили Name
         itemDto.setDescription(item.getDescription()); // установили Description
-        itemDto.setOwner(item.getOwner()); // установили Owner
+        itemDto.setOwner(UserMapper.userToDto(item.getOwner())); // установили Owner
         itemDto.setRequest(item.getRequest());
 
         return itemDto; //вернули Dto
@@ -43,7 +44,7 @@ public class ItemMapper {
         item.setIsAvailable(itemDto.getIsAvailable());//установили isAvailable
         item.setName(itemDto.getName()); // установили Name
         item.setDescription(itemDto.getDescription()); // установили Description
-        item.setOwner(itemDto.getOwner()); // установили Owner
+        item.setOwner(UserMapper.dtoToUser(itemDto.getOwner())); // установили Owner
         item.setRequest(itemDto.getRequest());
 
         return item; //вернули Item
@@ -64,7 +65,7 @@ public class ItemMapper {
         itemDto.setIsAvailable(item.getIsAvailable());//установили isAvailable
         itemDto.setName(item.getName()); // установили Name
         itemDto.setDescription(item.getDescription()); // установили Description
-        itemDto.setOwner(item.getOwner()); // установили Owner
+        itemDto.setOwner(UserMapper.userToDto(item.getOwner())); // установили Owner
         itemDto.setRequest(item.getRequest());
         itemDto.setComments(comments);
 

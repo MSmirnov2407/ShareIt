@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,6 @@ public class BookingDto {
     @NotNull
     private LocalDateTime end; // дата окончания аренды
     private int itemId; // id вещи
-    private User booker; // пользоавтель , который осуществляет бронирование
+    private UserDto booker; // пользоавтель , который осуществляет бронирование
     private Status status = Status.WAITING; //статус,подтверждено ли бронирование владельцем
 }

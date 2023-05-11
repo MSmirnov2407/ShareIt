@@ -27,6 +27,10 @@ public class UserMapper {
      * @return User
      */
     public static User dtoToUser(UserDto userDto) {
+        if (userDto == null){
+            return null;
+        }
+
         User user = new User(); //создали объект User
 
         user.setId(userDto.getId()); // установили id

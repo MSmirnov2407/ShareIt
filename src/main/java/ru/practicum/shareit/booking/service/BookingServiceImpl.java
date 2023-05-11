@@ -69,9 +69,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoWithItem> getAllDtoByUserAndState(int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
-        if (user == null) {
-            throw new ElementNotFoundException("Пользователь с id=" + userId + " не найден");
-        }
         List<Booking> bookings;
         switch (state) {
             case "ALL":
@@ -104,9 +101,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDtoWithItem> getAllDtoByOwnerAndState(int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
-        if (user == null) {
-            throw new ElementNotFoundException("Пользователь с id=" + userId + " не найден");
-        }
         List<Booking> bookings;
         switch (state) {
             case "ALL":
@@ -151,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
             }
             booking.setStatus(Status.APPROVED);
         } else {
-            if (booking.getStatus() == Status.APPROVED) {
+            if (booking.getStatus() == Status.REJECTED) {
                 throw new BookingAlreadyApprovedException("Бронирование с Id=" + booking.getId() + " уже было отклонено ранее");
             }
             booking.setStatus(Status.REJECTED);
@@ -186,6 +180,10 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getItem().getOwner().getId() == booking.getBooker().getId()) { //если владелец совпадает с автором бронирования
             throw new BookerIsOwnerException("BookingService: автор бронирования является владельцем вещи");
         }
-
+        /*если бронирования пересекаются. Т.е. начало бронирования раньше, чем конец проверяемого бронирования, и конец позже, чем начало проверяемого*/
+        List<Booking> overBooking = bookingRepository.findByItem_IdAndStartIsBeforeAndEndIsAfter(booking.getItem().getId(), end,start, Sort.by("start").descending());
+        if (overBooking.size() > 0){
+            throw new BookingTimeException("Время бронирования пересекается с уже существующим бронированием");
+        }
     }
 }

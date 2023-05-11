@@ -18,7 +18,7 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id; //id вещи
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner; //владелец вещи
     @Column(name = "name")

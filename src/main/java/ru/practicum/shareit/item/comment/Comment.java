@@ -21,10 +21,10 @@ public class Comment {
     private int id; //id комментария
     @Column(name = "text")
     private String text; //текст комментария
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item; //вещь, к которой относится комментарий
-    @OneToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author; //автор комментария
     @Column(name = "created")

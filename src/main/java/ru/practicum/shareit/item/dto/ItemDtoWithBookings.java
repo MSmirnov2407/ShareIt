@@ -6,6 +6,7 @@ import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingDtoWithoutBooker;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ItemDtoWithBookings {
 
     private int id; //id вещи
-    private User owner; //владелец вещи
+    private UserDto owner; //владелец вещи
     @NotBlank
     private String name; //наименование
     @NotBlank
