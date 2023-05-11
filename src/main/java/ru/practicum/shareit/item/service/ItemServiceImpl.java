@@ -17,7 +17,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-//import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.item.repository.CommentJpaRepository;
 import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -26,6 +25,7 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -84,7 +84,19 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> bookings = bookingRepository.findByItem_IdIn(itemsIds, Sort.by("start").ascending()); //список всех бронирований, относящихся к item-ам от старых к новым
         List<Comment> comments = commentRepository.findByItem_IdIn(itemsIds, Sort.by("created").ascending()); //сортировка от старых к новым
         List<CommentDto> commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
-        return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookings, ownerId, commentsDto)).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
+
+        /*преобразование списков в мапы из id и бронирования/комментария */
+        Map<Integer, List<Booking>> bookingsMap = itemsIds.stream()
+                .collect(Collectors.toMap(itemId -> itemId,
+                        i -> bookings.stream()
+                                .filter(b -> b.getItem().getId() == i)
+                                .collect(Collectors.toList())));
+        Map<Integer, List<CommentDto>> commentsDtoMap = itemsIds.stream()
+                .collect(Collectors.toMap(itemId -> itemId,
+                        i -> commentsDto.stream()
+                                .filter(c -> c.getItemId() == i)
+                                .collect(Collectors.toList())));
+        return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookingsMap.get(i.getId()), ownerId, commentsDtoMap.get(i.getId()))).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     @Override

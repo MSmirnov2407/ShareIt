@@ -15,12 +15,12 @@ import java.time.LocalDate;
 @ToString
 public class ItemRequest {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id; //id запроса на вещь
 
     @Column(name = "text")
     String requestText; //текст запроса
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User requestor; //пользователь, создавший запрос
 
