@@ -86,16 +86,12 @@ public class ItemServiceImpl implements ItemService {
         List<CommentDto> commentsDto = comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList()); //преобразовали комменты в DTO
 
         /*преобразование списков в мапы из id и бронирования/комментария */
-        Map<Integer, List<Booking>> bookingsMap = itemsIds.stream()
-                .collect(Collectors.toMap(itemId -> itemId,
-                        i -> bookings.stream()
-                                .filter(b -> b.getItem().getId() == i)
-                                .collect(Collectors.toList())));
-        Map<Integer, List<CommentDto>> commentsDtoMap = itemsIds.stream()
-                .collect(Collectors.toMap(itemId -> itemId,
-                        i -> commentsDto.stream()
-                                .filter(c -> c.getItemId() == i)
-                                .collect(Collectors.toList())));
+        Map<Integer, List<Booking>> bookingsMap = bookings.stream()
+                .collect(Collectors.groupingBy(b -> b.getItem().getId()));
+
+        Map<Integer, List<CommentDto>> commentsDtoMap = commentsDto.stream()
+                .collect(Collectors.groupingBy(CommentDto::getItemId));
+
         return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookingsMap.get(i.getId()), ownerId, commentsDtoMap.get(i.getId()))).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
