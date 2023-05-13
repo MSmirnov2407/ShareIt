@@ -3,15 +3,14 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @Slf4j
@@ -38,13 +37,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable int itemId) {
+    public ItemDtoWithBookings getItem(@PathVariable int itemId,
+                                       @RequestHeader("X-Sharer-User-Id") int userId) {
         log.info("Запрошена вещь. Id = {}", itemId);
-        return itemService.getItemDtoById(itemId);
+        return itemService.getItemDtoWithBookingsById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByUser(@RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public List<ItemDtoWithBookings> getAllItemsByUser(@RequestHeader("X-Sharer-User-Id") int ownerId) {
         log.info("Получен список вещей пользователя с id= " + ownerId);
         return itemService.getAllDtoByUser(ownerId);
     }
@@ -54,4 +54,13 @@ public class ItemController {
         log.info("Получен список вещей, содержащих text= " + text);
         return itemService.searchItemsDto(text);
     }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@PathVariable int itemId, @RequestHeader("X-Sharer-User-Id") int authorId,
+                                    @Valid @RequestBody CommentDto commentDto) {
+        CommentDto comment = itemService.createComment(itemId, authorId, commentDto);
+        log.info("Оставлен комментарий от пользователя id={}, на вещь id= {}", itemId, authorId);
+        return comment;
+    }
+
 }

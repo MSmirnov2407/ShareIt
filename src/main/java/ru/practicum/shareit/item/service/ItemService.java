@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
 
 import java.util.List;
 
@@ -24,11 +26,19 @@ public interface ItemService {
     ItemDto getItemDtoById(int itemId);
 
     /**
+     * Получение DTO вещи c информацией о бронировании из хранилища по id
+     *
+     * @param itemId
+     * @return
+     */
+    ItemDtoWithBookings getItemDtoWithBookingsById(int itemId, int userId);
+
+    /**
      * Возвращение списка всех вещей
      *
      * @return
      */
-    List<ItemDto> getAllDtoByUser(int ownerId);
+    List<ItemDtoWithBookings> getAllDtoByUser(int ownerId);
 
     /**
      * Удаление вещи из хрангилища
@@ -53,4 +63,11 @@ public interface ItemService {
      */
     List<ItemDto> searchItemsDto(String text);
 
+    /**
+     * Добавление комментария от пользователя на вещь
+     * @param itemId - id вещи
+     * @param authorId - автор комментария
+     * @return - комментарий
+     */
+    CommentDto createComment(int itemId, int authorId, CommentDto commentDto);
 }

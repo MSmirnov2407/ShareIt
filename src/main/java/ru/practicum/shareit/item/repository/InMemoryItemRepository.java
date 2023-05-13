@@ -26,7 +26,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item saveItem(Item newItem) {
+    public Item save(Item newItem) {
         Integer id = newItem.getId(); //взяли id вещи
         items.put(id, newItem); //по id сложили в мапу новую вещь
         return items.get(id); //вернули вещь по id

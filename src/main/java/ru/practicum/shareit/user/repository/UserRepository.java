@@ -4,6 +4,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface UserRepository {
     /**
@@ -12,14 +13,14 @@ public interface UserRepository {
      * @param id - id пользователя
      * @return User - пользователь
      */
-    User findUserById(int id);
+    Optional<User> findById(int id);
 
     /**
      * Получение списка всех пользователей
      *
      * @return
      */
-    List<User> getAll();
+    List<User> findAll();
 
     /**
      * Сохранение нового пользователя в хранилище
@@ -27,7 +28,7 @@ public interface UserRepository {
      * @param newUser сохраняемый пользователь
      * @return сохраненный пользователь
      */
-    User saveUser(User newUser);
+    User save(User newUser);
 
     /**
      * Обновление пользователя в хранилище
@@ -42,7 +43,7 @@ public interface UserRepository {
      *
      * @param id - id пользователя
      */
-    void deleteUserById(int id);
+    void deleteById(int id);
 
     /**
      * Возращает мапу из id-емейлов пользователей

@@ -2,6 +2,7 @@ package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,18 +18,27 @@ public class ErrorHandler {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(ElementNotFoundException.class)
+    @ExceptionHandler({ElementNotFoundException.class, NotAnOwnerException.class, BookerIsOwnerException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public String handleElementNotFound(ElementNotFoundException ex) {
-        log.debug("ElementNotFountException :" + ex.getMessage());
+    public String handleElementNotFound(RuntimeException ex) {
+        log.debug(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         return ex.getMessage();
     }
 
-    @ExceptionHandler(NotAnOwnerException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public String handleNotAnOwner(NotAnOwnerException ex) {
-        log.debug("NotAnOwnerException :" + ex.getMessage());
+    @ExceptionHandler({ItemNotAvailableException.class, BookingTimeException.class,
+            BookingAlreadyApprovedException.class, ValidateCommentException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
+    public String handleBadRequest(RuntimeException ex) {
+        log.debug(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         return ex.getMessage();
+    }
+
+    /*тест из Postman подразумевает ответ в виде ResponseEntity*/
+    @ExceptionHandler(StateNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleAllAnother(StateNotAllowedException ex) {
+        log.debug("StateNotAllowedException :" + ex.getMessage());
+        ErrorResponse response = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR); //500
     }
 
     @ExceptionHandler(RuntimeException.class)
