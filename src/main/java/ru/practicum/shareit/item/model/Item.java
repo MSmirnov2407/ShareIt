@@ -28,7 +28,7 @@ public class Item {
     @JsonProperty("available")
     @Column(name = "isAvailable")
     private Boolean isAvailable; //доступность вещи для аренды
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request; //запрос, по которому была создана вещь
 }

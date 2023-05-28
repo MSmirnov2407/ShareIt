@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -41,7 +42,6 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = BookingMapper.dtoToBooking(newBookingDto); //превращаем dto в объект
         booking.setBooker(UserMapper.dtoToUser(userService.getUserDtoById(bookerId))); //присваиваем пользователя (объект User вместо простого id)
         booking.setItem(ItemMapper.dtoToItem(itemService.getItemDtoById(newBookingDto.getItemId()))); //присваиваем item (объект Item вместо простого id)
-
         validateCreate(booking); //дополнительная валидация
         bookingRepository.save(booking); //сохраняем бронирование в хранилище
         return BookingMapper.bookingToDtoWithItem(booking); //возвращаем DTO Объекта
@@ -67,27 +67,32 @@ public class BookingServiceImpl implements BookingService {
      * @return список бронирований
      */
     @Override
-    public List<BookingDtoWithItem> getAllDtoByUserAndState(int userId, String state) {
+    public List<BookingDtoWithItem> getAllDtoByUserAndState(int from, int size, int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
         List<Booking> bookings;
+
+        if (from < 0 || size < 1) {
+            throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("start").descending()); //параметризируем переменную для пагинации
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findByBooker_Id(userId, Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_Id(userId, page);
                 break;
             case "PAST":
-                bookings = bookingRepository.findByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(), Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findByBooker_IdAndStartIsAfter(userId, LocalDateTime.now(), Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndStartIsAfter(userId, LocalDateTime.now(), page);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(), LocalDateTime.now(), page);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING, Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING, page);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.REJECTED, Sort.by("start").descending());
+                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.REJECTED, page);
                 break;
             default:
                 throw new StateNotAllowedException("Unknown state: UNSUPPORTED_STATUS");
@@ -99,27 +104,32 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public List<BookingDtoWithItem> getAllDtoByOwnerAndState(int userId, String state) {
+    public List<BookingDtoWithItem> getAllDtoByOwnerAndState(int from, int size, int userId, String state) {
         UserDto user = userService.getUserDtoById(userId);
         List<Booking> bookings;
+
+        if (from < 0 || size < 1) {
+            throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size); //параметризируем переменную для пагинации
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findByOwner(userId);
+                bookings = bookingRepository.findByOwner(userId, page);
                 break;
             case "PAST":
-                bookings = bookingRepository.findPastByOwner(userId, LocalDateTime.now());
+                bookings = bookingRepository.findPastByOwner(userId, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findFutureByOwner(userId, LocalDateTime.now());
+                bookings = bookingRepository.findFutureByOwner(userId, LocalDateTime.now(), page);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findCurrentByOwner(userId, LocalDateTime.now());
+                bookings = bookingRepository.findCurrentByOwner(userId, LocalDateTime.now(), page);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findByOwnerAndStatus(userId, Status.WAITING);
+                bookings = bookingRepository.findByOwnerAndStatus(userId, Status.WAITING, page);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findByOwnerAndStatus(userId, Status.REJECTED);
+                bookings = bookingRepository.findByOwnerAndStatus(userId, Status.REJECTED, page);
                 break;
             default:
                 throw new StateNotAllowedException("Unknown state: UNSUPPORTED_STATUS");
@@ -131,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void deleteBooking(int id) {
-
+        bookingRepository.deleteById(id);
     }
 
     @Override

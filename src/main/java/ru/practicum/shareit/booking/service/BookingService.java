@@ -24,19 +24,20 @@ public interface BookingService {
     BookingDtoWithItem getBookingDtoById(int bookingId, int userId);
 
     /**
-     * Возвращение списка всех бронирований пользователя
+     * Возвращение списка всех бронирований пользователя с постраничным просмотром
      *
      * @return Список бронирований конкретного пользователя
      */
-    List<BookingDtoWithItem> getAllDtoByUserAndState(int userId, String state);
+    List<BookingDtoWithItem> getAllDtoByUserAndState(int from, int size, int userId, String state);
 
     /**
-     * Получение списка бронирований для всех вещей текущего пользователя
+     * Получение списка бронирований для всех вещей текущего пользователя с постраничным просмотром
+     *
      * @param userId - id владельца
-     * @param state - статус бронирований
+     * @param state  - статус бронирований
      * @return - список бронирований
      */
-    List<BookingDtoWithItem> getAllDtoByOwnerAndState(int userId, String state);
+    List<BookingDtoWithItem> getAllDtoByOwnerAndState(int from, int size, int userId, String state);
 
     /**
      * Удаление бронирования из хранилища

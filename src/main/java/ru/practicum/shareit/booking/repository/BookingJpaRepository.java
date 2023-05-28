@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,26 +12,26 @@ import java.util.List;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Integer> {
 
-    List<Booking> findByBooker_IdAndEndIsBefore(int bookerId, LocalDateTime now, Sort sort);
+    List<Booking> findByBooker_IdAndEndIsBefore(int bookerId, LocalDateTime now, Pageable page);
 
-    List<Booking> findByBooker_IdAndStartIsAfter(int bookerId, LocalDateTime now, Sort sort);
+    List<Booking> findByBooker_IdAndStartIsAfter(int bookerId, LocalDateTime now, Pageable page);
 
-    List<Booking> findByBooker_Id(int bookerId, Sort sort);
+    List<Booking> findByBooker_Id(int bookerId, Pageable page);
 
-    List<Booking> findByBooker_IdAndStatus(int bookerId, Status state, Sort sort);
+    List<Booking> findByBooker_IdAndStatus(int bookerId, Status state, Pageable page);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
             "WHERE (b.item.owner.id = ?1) " +
             "ORDER BY b.start DESC")
-    List<Booking> findByOwner(int ownerId);
+    List<Booking> findByOwner(int ownerId, Pageable page);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
             "WHERE (b.item.owner.id = ?1) " +
             "AND (b.status = ?2) " +
             "ORDER BY b.start DESC")
-    List<Booking> findByOwnerAndStatus(int ownerId, Status status);
+    List<Booking> findByOwnerAndStatus(int ownerId, Status status, Pageable page);
 
 
     @Query("SELECT b " +
@@ -38,14 +39,14 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Integer> {
             "WHERE (b.item.owner.id = ?1) " +
             "AND (b.end < ?2) " +
             "ORDER BY b.start DESC")
-    List<Booking> findPastByOwner(int ownerId, LocalDateTime now);
+    List<Booking> findPastByOwner(int ownerId, LocalDateTime now, Pageable page);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
             "WHERE (b.item.owner.id = ?1) " +
             "AND (b.start > ?2) " +
             "ORDER BY b.start DESC")
-    List<Booking> findFutureByOwner(int ownerId, LocalDateTime now);
+    List<Booking> findFutureByOwner(int ownerId, LocalDateTime now, Pageable page);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
@@ -53,7 +54,7 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Integer> {
             "AND (b.start < ?2) " +
             "AND (b.end > ?2) " +
             "ORDER BY b.start DESC")
-    List<Booking> findCurrentByOwner(int ownerId, LocalDateTime now);
+    List<Booking> findCurrentByOwner(int ownerId, LocalDateTime now, Pageable page);
 
     List<Booking> findByItem_IdIn(List<Integer> itemsIds, Sort sort);
 
@@ -61,7 +62,7 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findByItem_idAndBooker_IdAndEndIsBefore(int itemId, int bookerId, LocalDateTime end, Sort sort);
 
-    List<Booking> findByBooker_IdAndStartIsBeforeAndEndIsAfter(int userId, LocalDateTime start, LocalDateTime end, Sort sort);
+    List<Booking> findByBooker_IdAndStartIsBeforeAndEndIsAfter(int userId, LocalDateTime start, LocalDateTime end, Pageable page);
 
     List<Booking> findByItem_IdAndStartIsBeforeAndEndIsAfter(int itemId, LocalDateTime start, LocalDateTime end, Sort sort);
 

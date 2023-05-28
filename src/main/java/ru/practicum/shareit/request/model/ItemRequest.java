@@ -6,7 +6,7 @@ import lombok.ToString;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests", schema = "public")
@@ -19,11 +19,11 @@ public class ItemRequest {
     int id; //id запроса на вещь
 
     @Column(name = "text")
-    String requestText; //текст запроса
+    String description; //текст запроса
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User requestor; //пользователь, создавший запрос
 
     @Column(name = "creation_date")
-    private LocalDate created = LocalDate.now(); //дата и время сохдания запроса
+    private LocalDateTime created = LocalDateTime.now(); //дата и время сохдания запроса
 }
