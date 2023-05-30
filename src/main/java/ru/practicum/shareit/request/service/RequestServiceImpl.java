@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class RequestServiceImpl implements RequestService {
-    UserService userService;
-    RequestJpaRepository requestRepository;
-    ItemJpaRepository itemRepository;
+    private UserService userService;
+    private RequestJpaRepository requestRepository;
+    private ItemJpaRepository itemRepository;
 
     @Autowired
     public RequestServiceImpl(UserService userService, RequestJpaRepository requestRepository,
@@ -60,7 +60,7 @@ public class RequestServiceImpl implements RequestService {
         if (from < 0 || size < 1) {
             throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
         }
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("created").descending()); //параметризируем переменную для пагинации
+        PageRequest page = PageRequest.of(from / size, size, Sort.by("created").descending()); //параметризируем переменную для пагинации
         List<ItemRequest> requestList = requestRepository.findAllByRequestor_IdNot(userId, page); //список запросов ДРУГИХ пользователя от новых к старым в рамках одной страницы
         return setAnswersToRequests(requestList);
     }

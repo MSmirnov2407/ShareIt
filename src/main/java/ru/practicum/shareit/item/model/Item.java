@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Table(name = "items", schema = "public")
 @Getter
 @Setter
-@ToString
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

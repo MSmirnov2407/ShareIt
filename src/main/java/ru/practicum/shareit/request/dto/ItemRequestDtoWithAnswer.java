@@ -13,10 +13,10 @@ import java.util.List;
 @Getter
 @Setter
 public class ItemRequestDtoWithAnswer {
-    int id; //id запроса на вещь
+    private int id; //id запроса на вещь
     @NotBlank
-    String description; //текст запроса
+    private String description; //текст запроса
     private UserDto requestor; //пользователь, создавший запрос
     private LocalDateTime created = LocalDateTime.now(); //дата и время сохдания запроса
-    List<ItemDto> items = new ArrayList<>(); //список ответов на запрос
+    private List<ItemDto> items = new ArrayList<>(); //список ответов на запрос
 }

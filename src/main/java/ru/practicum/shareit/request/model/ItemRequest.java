@@ -12,14 +12,13 @@ import java.time.LocalDateTime;
 @Table(name = "requests", schema = "public")
 @Getter
 @Setter
-@ToString
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id; //id запроса на вещь
+    private int id; //id запроса на вещь
 
     @Column(name = "text")
-    String description; //текст запроса
+    private String description; //текст запроса
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User requestor; //пользователь, создавший запрос

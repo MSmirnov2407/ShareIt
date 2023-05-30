@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "bookings", schema = "public")
 @Getter
 @Setter
-@ToString
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

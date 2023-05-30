@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
         if (from < 0 || size < 1) {
             throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
         }
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("start").descending()); //параметризируем переменную для пагинации
+        PageRequest page = PageRequest.of(from / size, size, Sort.by("start").descending()); //параметризируем переменную для пагинации
         switch (state) {
             case "ALL":
                 bookings = bookingRepository.findByBooker_Id(userId, page);
@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
         if (from < 0 || size < 1) {
             throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
         }
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size); //параметризируем переменную для пагинации
+        PageRequest page = PageRequest.of(from / size, size); //параметризируем переменную для пагинации
         switch (state) {
             case "ALL":
                 bookings = bookingRepository.findByOwner(userId, page);
