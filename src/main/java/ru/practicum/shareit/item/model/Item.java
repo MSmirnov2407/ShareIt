@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
@@ -13,7 +12,6 @@ import javax.persistence.*;
 @Table(name = "items", schema = "public")
 @Getter
 @Setter
-@ToString
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +26,7 @@ public class Item {
     @JsonProperty("available")
     @Column(name = "isAvailable")
     private Boolean isAvailable; //доступность вещи для аренды
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request; //запрос, по которому была создана вещь
 }

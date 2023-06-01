@@ -34,11 +34,11 @@ public interface ItemService {
     ItemDtoWithBookings getItemDtoWithBookingsById(int itemId, int userId);
 
     /**
-     * Возвращение списка всех вещей
+     * Возвращение списка всех вещей с постраничным просмотром
      *
      * @return
      */
-    List<ItemDtoWithBookings> getAllDtoByUser(int ownerId);
+    List<ItemDtoWithBookings> getAllDtoByUser(int from, int size, int ownerId);
 
     /**
      * Удаление вещи из хрангилища
@@ -56,16 +56,17 @@ public interface ItemService {
     ItemDto updateItem(ItemDto updatedItemDto, int itemId, int ownerId);
 
     /**
-     * Поиск вещи с совпадением текста в названии или описании
+     * Поиск вещи с совпадением текста в названии или описании ( с постраничным просмотром)
      *
      * @param text - искомый текст
      * @return
      */
-    List<ItemDto> searchItemsDto(String text);
+    List<ItemDto> searchItemsDto(int from, int size, String text);
 
     /**
      * Добавление комментария от пользователя на вещь
-     * @param itemId - id вещи
+     *
+     * @param itemId   - id вещи
      * @param authorId - автор комментария
      * @return - комментарий
      */

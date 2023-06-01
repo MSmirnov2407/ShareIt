@@ -63,7 +63,7 @@ public class BookingController {
     }
 
     /**
-     * Получение списка всех бронирований текущего пользователя
+     * Получение списка всех бронирований текущего пользователя (с постраничным просмотром)
      *
      * @param state  - фильтр по статусам бронирований. По умолчанию ALL
      * @param userId - id автора бронирований
@@ -71,13 +71,15 @@ public class BookingController {
      */
     @GetMapping()
     public List<BookingDtoWithItem> getAllByUser(@RequestParam(value = "state", defaultValue = "ALL") String state,
-                                                 @RequestHeader("X-Sharer-User-Id") int userId) {
+                                                 @RequestHeader("X-Sharer-User-Id") int userId,
+                                                 @RequestParam(name = "from", defaultValue = "0") int from,
+                                                 @RequestParam(name = "size", defaultValue = "3") int size) {
         log.info("Получены брониврования пользователя UserId={} со статусом {}", userId, state);
-        return bookingService.getAllDtoByUserAndState(userId, state);
+        return bookingService.getAllDtoByUserAndState(from, size, userId, state);
     }
 
     /**
-     * Получение списка бронирований для всех вещей текущего пользователя
+     * Получение списка бронирований для всех вещей текущего пользователя (с постраничным просмотром)
      *
      * @param state  - фильтр по статусам бронирований. По умолчанию ALL
      * @param userId - id владельца вещей
@@ -85,8 +87,10 @@ public class BookingController {
      */
     @GetMapping("/owner")
     public List<BookingDtoWithItem> getAllByItem(@RequestParam(value = "state", defaultValue = "ALL") String state,
-                                                 @RequestHeader("X-Sharer-User-Id") int userId) {
+                                                 @RequestHeader("X-Sharer-User-Id") int userId,
+                                                 @RequestParam(name = "from", defaultValue = "0") int from,
+                                                 @RequestParam(name = "size", defaultValue = "3") int size) {
         log.info("Получены брониврования пользователя UserId={} со статусом {}", userId, state);
-        return bookingService.getAllDtoByOwnerAndState(userId, state);
+        return bookingService.getAllDtoByOwnerAndState(from, size, userId, state);
     }
 }

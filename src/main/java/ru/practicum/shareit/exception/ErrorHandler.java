@@ -26,7 +26,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({ItemNotAvailableException.class, BookingTimeException.class,
-            BookingAlreadyApprovedException.class, ValidateCommentException.class})
+            BookingAlreadyApprovedException.class, ValidateCommentException.class, PaginationParametersException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST) //400
     public String handleBadRequest(RuntimeException ex) {
         log.debug(ex.getClass().getSimpleName() + ": " + ex.getMessage());
@@ -35,7 +35,7 @@ public class ErrorHandler {
 
     /*тест из Postman подразумевает ответ в виде ResponseEntity*/
     @ExceptionHandler(StateNotAllowedException.class)
-    public ResponseEntity<ErrorResponse> handleAllAnother(StateNotAllowedException ex) {
+    public ResponseEntity<ErrorResponse> handleStateNotAllowed(StateNotAllowedException ex) {
         log.debug("StateNotAllowedException :" + ex.getMessage());
         ErrorResponse response = new ErrorResponse(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR); //500

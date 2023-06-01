@@ -19,6 +19,9 @@ public class ItemMapper {
      * @return - Dto объекта Item
      */
     public static ItemDto itemToDto(Item item) {
+        if (item == null) {
+            return null;
+        }
         ItemDto itemDto = new ItemDto(); //создали объект Dto
 
         itemDto.setId(item.getId()); // установили id
@@ -26,8 +29,9 @@ public class ItemMapper {
         itemDto.setName(item.getName()); // установили Name
         itemDto.setDescription(item.getDescription()); // установили Description
         itemDto.setOwner(UserMapper.userToDto(item.getOwner())); // установили Owner
-        itemDto.setRequest(item.getRequest());
-
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
         return itemDto; //вернули Dto
     }
 
@@ -45,7 +49,6 @@ public class ItemMapper {
         item.setName(itemDto.getName()); // установили Name
         item.setDescription(itemDto.getDescription()); // установили Description
         item.setOwner(UserMapper.dtoToUser(itemDto.getOwner())); // установили Owner
-        item.setRequest(itemDto.getRequest());
 
         return item; //вернули Item
     }
