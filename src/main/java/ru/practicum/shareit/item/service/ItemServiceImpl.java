@@ -91,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
         if (from < 0 || size < 1) {
             throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
         }
-        PageRequest page = PageRequest.of(from / size, size); //параметризируем переменную для пагинации
+        PageRequest page = PageRequest.of(from / size, size, Sort.by("id").ascending()); //параметризируем переменную для пагинации
 
         List<Item> items = itemRepository.findAllByOwnerId(ownerId, page); //взяли список вещей из репозитория
         List<Integer> itemsIds = items.stream().map(Item::getId).collect(Collectors.toList()); // список id из списка item-ов
@@ -144,7 +144,7 @@ public class ItemServiceImpl implements ItemService {
         if (from < 0 || size < 1) {
             throw new PaginationParametersException("Параметры постраничной выбрки должны быть from >=0, size >0");
         }
-        PageRequest page = PageRequest.of(from / size, size); //параметризируем переменную для пагинации
+        PageRequest page = PageRequest.of(from / size, size, Sort.by("id").ascending()); //параметризируем переменную для пагинации
 
         if (text.isBlank()) {
             return new ArrayList<>();
