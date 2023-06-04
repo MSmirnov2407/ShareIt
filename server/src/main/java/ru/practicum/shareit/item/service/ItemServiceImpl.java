@@ -105,8 +105,14 @@ public class ItemServiceImpl implements ItemService {
 
         Map<Integer, List<CommentDto>> commentsDtoMap = commentsDto.stream()
                 .collect(Collectors.groupingBy(CommentDto::getItemId));
+log.warn("!!!!!!!!!!");
+        List<ItemDtoWithBookings> test = items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookingsMap.get(i.getId()), ownerId, commentsDtoMap.get(i.getId()))).collect(Collectors.toList());
+        for(var t: test){
+            log.warn("+"+t.getName()+" "+t.getId());
+        }
 
-        return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookingsMap.get(i.getId()), ownerId, commentsDtoMap.get(i.getId()))).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
+        return test;
+        // return items.stream().map(i -> ItemMapper.itemToDtoWithBookings(i, bookingsMap.get(i.getId()), ownerId, commentsDtoMap.get(i.getId()))).collect(Collectors.toList()); //вернули список с преобразованием itemToDto
     }
 
     @Override
