@@ -37,13 +37,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteItem(@PathVariable Long userId){
+    public ResponseEntity<Object> deleteItem(@PathVariable Long userId) {
         log.info("Delete user userId={}", userId);
         return userClient.deleteUser(userId);
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> putUser(@RequestBody UserDto userDto, @PathVariable int userId){
+    public ResponseEntity<Object> putUser(@RequestBody UserDto userDto, @PathVariable int userId) {
         log.info("Update user userId={}", userId);
         return userClient.putUser(userDto, userId);
     }

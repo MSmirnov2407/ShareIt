@@ -8,11 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.UserDto;
-
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -37,15 +34,15 @@ public class UserClient extends BaseClient {
         return get("/" + userId);
     }
 
-    public ResponseEntity<Object> postUser( UserDto newUserDto){
-        return post("",newUserDto);
+    public ResponseEntity<Object> postUser(UserDto newUserDto) {
+        return post("", newUserDto);
     }
 
-    public ResponseEntity<Object> deleteUser( Long userId){
-        return delete("/"+userId);
+    public ResponseEntity<Object> deleteUser(Long userId) {
+        return delete("/" + userId);
     }
 
-    public ResponseEntity<Object> putUser(UserDto userDto, int userId){
-        return patch("/"+userId, userDto);
+    public ResponseEntity<Object> putUser(UserDto userDto, int userId) {
+        return patch("/" + userId, userDto);
     }
 }

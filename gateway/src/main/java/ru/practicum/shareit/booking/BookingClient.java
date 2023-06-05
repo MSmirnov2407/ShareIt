@@ -8,7 +8,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
-import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 
 import java.util.Map;
@@ -27,9 +26,9 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookings(long userId, String state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
-                "state", state.name(),
+                "state", state.toUpperCase(),
                 "from", from,
                 "size", size
         );
@@ -43,5 +42,20 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
         return get("/" + bookingId, userId);
+    }
+
+    public ResponseEntity<Object> getAllByItem(long userId, String state, int from, int size) {
+        Map<String, Object> parameters = Map.of(
+                "state", state.toUpperCase(),
+                "from", from,
+                "size", size);
+        return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
+    }
+
+
+    public ResponseEntity<Object> patchConfirmation(long bookingId, long userId, String approved) {
+        Map<String, Object> parameters = Map.of(
+                "approved", Boolean.parseBoolean(approved));
+        return patch("/" + bookingId + "?approved={approved}", userId, parameters, null);
     }
 }

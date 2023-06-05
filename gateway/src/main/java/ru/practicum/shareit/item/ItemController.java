@@ -8,10 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -53,7 +51,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItems(@NotBlank @RequestParam String text,
+    public ResponseEntity<Object> searchItems(@RequestParam String text,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Search items with text={}, from={}, size={}", text, from, size);
@@ -63,8 +61,8 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> createComment(@PathVariable int itemId,
                                                 @RequestHeader("X-Sharer-User-Id") int authorId,
-                                                @Valid @RequestBody CommentDto commentDto){
-        log.info("Creating comment {}, itemId={}, authorId={}",commentDto, itemId, authorId);
+                                                @Valid @RequestBody CommentDto commentDto) {
+        log.info("Creating comment {}, itemId={}, authorId={}", commentDto, itemId, authorId);
         return itemClient.postComment(commentDto, itemId, authorId);
     }
 
