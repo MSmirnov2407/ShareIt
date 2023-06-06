@@ -15,5 +15,5 @@ public class ItemRequestDto {
     @NotBlank
     private String description; //текст запроса
     private UserDto requestor; //пользователь, создавший запрос
-    private LocalDateTime created = LocalDateTime.now(ZoneId.of("Africa/Addis_Ababa")); //дата и время создания запроса
+    private LocalDateTime created = LocalDateTime.now(); //дата и время создания запроса
 }
