@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto postItem(@Valid @RequestBody ItemDto newItemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public ItemDto postItem(@RequestBody ItemDto newItemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
         ItemDto itemDto = itemService.createItem(newItemDto, ownerId);
         log.info("Создана вещь. Id = {}, name = {}", itemDto.getId(), itemDto.getName());
         return itemDto;
@@ -61,7 +60,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@PathVariable int itemId, @RequestHeader("X-Sharer-User-Id") int authorId,
-                                    @Valid @RequestBody CommentDto commentDto) {
+                                    @RequestBody CommentDto commentDto) {
         CommentDto comment = itemService.createComment(itemId, authorId, commentDto);
         log.info("Оставлен комментарий от пользователя id={}, на вещь id= {}", itemId, authorId);
         return comment;

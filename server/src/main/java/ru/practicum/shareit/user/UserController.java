@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto postUser(@Valid @RequestBody UserDto newUserDto) {
+    public UserDto postUser(@RequestBody UserDto newUserDto) {
         UserDto userDto = userService.createUser(newUserDto);
         log.info("Создан Пользователь. Id = {}, email = {}", userDto.getId(), userDto.getEmail());
         return userDto; //возвращаем dto созданного объекта

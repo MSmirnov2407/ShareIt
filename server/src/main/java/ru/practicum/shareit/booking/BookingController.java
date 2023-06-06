@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoWithItem;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +28,7 @@ public class BookingController {
      * @return бронирование в виде DTO с вложенными Item
      */
     @PostMapping
-    public BookingDtoWithItem postBooking(@Valid @RequestBody BookingDto newBookingDto, @RequestHeader("X-Sharer-User-Id") int userId) {
+    public BookingDtoWithItem postBooking(@RequestBody BookingDto newBookingDto, @RequestHeader("X-Sharer-User-Id") int userId) {
         BookingDtoWithItem bookingDto = bookingService.createBooking(newBookingDto, userId);
         log.info("Создано брониврание. Id = {}, user = {}, item = {}", bookingDto.getId(), userId, bookingDto.getItem().getId());
         return bookingDto;
