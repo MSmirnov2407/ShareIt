@@ -6,6 +6,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 @Setter
@@ -14,5 +15,5 @@ public class ItemRequestDto {
     @NotBlank
     private String description; //текст запроса
     private UserDto requestor; //пользователь, создавший запрос
-    private LocalDateTime created = LocalDateTime.now(); //дата и время сохдания запроса
+    private LocalDateTime created = LocalDateTime.now(ZoneId.of("Africa/Addis_Ababa")); //дата и время создания запроса
 }
